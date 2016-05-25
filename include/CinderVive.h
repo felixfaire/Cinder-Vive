@@ -58,7 +58,7 @@ namespace hmd {
 		void unbind();
 
 		void renderController( const vr::Hmd_Eye& eye );
-		void renderStereoTargets( std::function<void(vr::Hmd_Eye)> renderScene );
+		void renderStereoTargets( std::function<void(vr::Hmd_Eye)> renderScene, const glm::mat4& worldPose);
 		void renderDistortion( const glm::ivec2& windowSize );
 
 		const vr::IVRSystem * getHmd() const { return mHMD; }
@@ -66,7 +66,25 @@ namespace hmd {
 		glm::mat4 getHMDMatrixProjectionEye( vr::Hmd_Eye nEye );
 		glm::mat4 getHMDMatrixPoseEye( vr::Hmd_Eye nEye );
 		glm::mat4 getCurrentViewProjectionMatrix( vr::Hmd_Eye nEye );
+		glm::mat4 getCurrentViewMatrix(vr::Hmd_Eye nEye);
+		glm::mat4 getCurrentViewMatrix();
 		void updateHMDMatrixPose();
+
+		bool getLeftHandController(glm::mat4& pose) {
+			if (mDeviceIndexLeft >= 0) {
+				pose = mDevicePose[mDeviceIndexLeft];
+				return true;
+			}
+			return false;
+		}
+
+		bool getRightHandController(glm::mat4& pose) {
+			if (mDeviceIndexRight >= 0) {
+				pose = mDevicePose[mDeviceIndexRight];
+				return true;
+			}
+			return false;
+		}
 
 		glm::mat4 convertSteamVRMatrixToMat4( const vr::HmdMatrix34_t &matPose );
 
@@ -103,7 +121,7 @@ namespace hmd {
 		std::array<vr::TrackedDevicePose_t, vr::k_unMaxTrackedDeviceCount> mTrackedDevicePose;
 		std::array<glm::mat4, vr::k_unMaxTrackedDeviceCount> mDevicePose;
 		std::array<bool, vr::k_unMaxTrackedDeviceCount> mShowTrackedDevice;
-
+		uint32_t mDeviceIndexLeft, mDeviceIndexRight;
 
 		GLuint m_unLensVAO;
 		GLuint m_glIDVertBuffer;
